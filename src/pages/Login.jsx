@@ -1,10 +1,12 @@
-import { use, useState } from "react"
-import { FiLogIn } from "react-icons/fi";
+import { useState } from "react"
+import { FiLogIn, FiEye, FiEyeOff } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
+    const [mensagemErro, setMensagemErro] = useState("");
+    const [mostrarSenha, setMostrarSenha] = useState(false);
 
     const navigate = useNavigate();
 
@@ -13,19 +15,26 @@ function Login() {
     const SENHA_CORRETA = "1234";
 
     function fazerLogin(event) {
-        event.preventDefault(); 
+        event.preventDefault();
 
         console.log("E-mail informado:", email);
         console.log("Senha informada:", senha);
+
+        if (email.trim() === "" || senha.trim() === "") {
+            setMensagemErro("Preencha e-mail e senha.");
+            return;
+        }
 
         if (
             email === EMAIL_CORRETO &&
             senha === SENHA_CORRETA
         ) {
+            setMensagemErro("");
             console.log("Login realizado com sucesso");
 
             navigate("/dashboard");
         } else {
+            setMensagemErro("E-mail ou senha incorretos.");
             console.log("E-mail ou senha incorretos");
         }
     }
@@ -47,14 +56,27 @@ function Login() {
                 }}
                 />
 
-                <input 
-                type="password"
-                placeholder="Senha"
-                value={senha}
-                onChange={(event) => {
-                    setSenha(event.target.value);
-                }}
-                />
+                <div className="campo-senha">
+                    <input 
+                    type={mostrarSenha ? "text" : "password"}
+                    placeholder="Senha"
+                    value={senha}
+                    onChange={(event) => {
+                        setSenha(event.target.value);
+                    }}
+                    />
+
+                    <button
+                    type="button"
+                    onClick={() => setMostrarSenha(!mostrarSenha)}
+                    >
+                        {mostrarSenha ? <FiEyeOff /> : <FiEye />}
+                    </button>
+                </div>
+
+                {mensagemErro && (
+                    <p className="mensagem-erro">{mensagemErro}</p>
+                )}
 
                 <button type="submit">
                     <FiLogIn />
